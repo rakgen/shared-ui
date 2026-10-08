@@ -1,0 +1,23 @@
+{
+  "name": "shared-ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Themes, Comfort (readability) settings, adaptive layout kit, icons and fonts shared by akfgen-tools and prime-tools.",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css",
+    "./themes": "./src/themes/themes.ts"
+  },
+  "files": ["src", "scripts"],
+  "scripts": { "check:contrast": "node scripts/check-contrast.mjs" },
+  "dependencies": { "@fontsource-variable/bricolage-grotesque": "^5.2.0" },
+  "peerDependencies": {
+    "@mantine/core": "^9.0.0",
+    "@mantine/hooks": "^9.0.0",
+    "@tabler/icons-react": "^3.0.0",
+    "motion": "^14.0.0",
+    "react": "^19.0.0",
+    "vaul": "^1.1.0"
+  }
+}

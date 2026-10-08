@@ -1,0 +1,33 @@
+/* shared-ui base styles: aurora page background, press effect, glass popovers, Comfort rules. Driven by CSS vars set by ThemeSync. */
+/* ── NEON POP page background: ink / lavender base with two slow-drifting aurora blobs (transform-only, cheap) ───────── */
+:root { --page-bg: #F6F3FF; --aurora-a: rgba(124, 92, 255, 0.32); --aurora-b: rgba(255, 77, 141, 0.22); --aurora-c: rgba(61, 242, 176, 0.14); }
+html[data-mantine-color-scheme="dark"]:not([data-flat="1"]) { --page-bg: #090912; --aurora-a: rgba(124, 92, 255, 0.34); --aurora-b: rgba(255, 77, 141, 0.20); --aurora-c: rgba(61, 242, 176, 0.10); }
+html:not([data-flat="1"]), html:not([data-flat="1"]) body { background: var(--page-bg) !important; }
+html:not([data-flat="1"]) body::before, html:not([data-flat="1"]) body::after { content: ""; position: fixed; z-index: -1; pointer-events: none; border-radius: 50%; filter: blur(80px); will-change: transform; }
+html:not([data-flat="1"]) body::before { width: 62vmax; height: 62vmax; left: -18vmax; top: -22vmax; background: radial-gradient(circle, var(--aurora-a), transparent 68%); animation: aurora-a 26s ease-in-out infinite alternate; }
+html:not([data-flat="1"]) body::after { width: 54vmax; height: 54vmax; right: -16vmax; bottom: -20vmax; background: radial-gradient(circle, var(--aurora-b), transparent 68%), radial-gradient(circle at 30% 70%, var(--aurora-c), transparent 60%); animation: aurora-b 32s ease-in-out infinite alternate; }
+@keyframes aurora-a { to { transform: translate(10vmax, 8vmax) scale(1.12); } }
+@keyframes aurora-b { to { transform: translate(-9vmax, -7vmax) scale(1.1); } }
+@media (prefers-reduced-motion: reduce) { body::before, body::after { animation: none; } }
+/* let the aurora show through the app shell */
+html:not([data-flat="1"]) .mantine-AppShell-main, html:not([data-flat="1"]) .mantine-AppShell-header, html:not([data-flat="1"]) .mantine-AppShell-navbar { background: transparent !important; }
+html:not([data-flat="1"]) .mantine-AppShell-navbar { backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+::selection { background: rgba(124, 92, 255, 0.35); }
+
+/* text colours follow the Neon Pop tokens everywhere Mantine sets its own */
+html[data-mantine-color-scheme="dark"]:not([data-flat="1"]) { --mantine-color-text: #F7F6FF; --mantine-color-dimmed: #9E9CC8; --mantine-color-body: transparent; }
+html[data-mantine-color-scheme="light"]:not([data-flat="1"]) { --mantine-color-text: #15122E; --mantine-color-dimmed: #5F5B8A; --mantine-color-body: transparent; }
+/* every tappable thing dips on press (spring-ish via a short ease-out) — one rule instead of per-component handlers */
+html:not([data-flat="1"]) .mantine-UnstyledButton-root, html:not([data-flat="1"]) .mantine-ActionIcon-root, html:not([data-flat="1"]) .mantine-Button-root, html:not([data-flat="1"]) a.mantine-UnstyledButton-root { transition: transform 140ms cubic-bezier(.2,.9,.3,1.2), background-color 150ms ease, box-shadow 150ms ease; }
+html:not([data-flat="1"]) .mantine-UnstyledButton-root:active:not(:disabled), html:not([data-flat="1"]) .mantine-ActionIcon-root:active:not(:disabled), html:not([data-flat="1"]) .mantine-Button-root:active:not(:disabled) { transform: scale(0.972); }
+@media (prefers-reduced-motion: reduce) { .mantine-UnstyledButton-root:active, .mantine-ActionIcon-root:active, .mantine-Button-root:active { transform: none; } }
+
+/* Mantine popovers / dropdowns / menus take the glass look too (vars are set per theme by ThemeSync) */
+html:not([data-flat="1"]) .mantine-Popover-dropdown, html:not([data-flat="1"]) .mantine-Menu-dropdown, html:not([data-flat="1"]) .mantine-Combobox-dropdown { background: color-mix(in srgb, var(--surface, #15162B) 92%, transparent) !important; backdrop-filter: blur(22px) saturate(150%); -webkit-backdrop-filter: blur(22px) saturate(150%); border: 1px solid var(--glass-border, transparent) !important; border-radius: 22px !important; box-shadow: var(--glass-glow, none) !important; }
+
+/* ── COMFORT: readable in every light ─────────────────────────────────────────────────────────────── */
+html[data-solid="1"] body::before, html[data-solid="1"] body::after { display: none; }                 /* no aurora behind text */
+html[data-solid="1"] * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; } /* no frosted blur */
+html[data-bold="1"] body { -webkit-text-stroke: 0.35px currentColor; }                                  /* thicker glyph strokes */
+html[data-contrast="max"] .mantine-UnstyledButton-root:focus-visible, html[data-contrast="high"] .mantine-UnstyledButton-root:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
+html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
