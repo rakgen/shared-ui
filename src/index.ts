@@ -12,3 +12,4 @@ export { ComfortPicker, ComfortPresets } from "./components/ComfortPicker";
 export { SettingsMenu } from "./components/SettingsMenu";
 export { BrandIcon } from "./icons/BrandIcon";
 export { Dock, type DockItem } from "./components/Dock";
+export { PullToRefresh } from "./components/PullToRefresh";

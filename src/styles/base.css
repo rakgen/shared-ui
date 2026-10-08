@@ -31,3 +31,7 @@ html[data-solid="1"] * { backdrop-filter: none !important; -webkit-backdrop-filt
 html[data-bold="1"] body { -webkit-text-stroke: 0.35px currentColor; }                                  /* thicker glyph strokes */
 html[data-contrast="max"] .mantine-UnstyledButton-root:focus-visible, html[data-contrast="high"] .mantine-UnstyledButton-root:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
 html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+
+/* pull-to-refresh spinner (PullToRefresh) + stop the browser's own overscroll refresh fighting it */
+@keyframes ptr-spin { to { transform: rotate(360deg); } }
+html, body { overscroll-behavior-y: contain; }
