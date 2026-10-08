@@ -8,8 +8,8 @@ import { themeById } from "../themes/themes";
 
 // The settings gear: a two-level menu (Theme / Comfort / Text size) with one-tap Bright / Dim presets on top.
 // Text size scales the whole app's root font-size (key `uiScale` in localStorage); apply it before mount to avoid a flash.
-const SCALES = [0.875, 1, 1.125, 1.25, 1.5];
-const SCALE_LABELS = ["XS", "S", "M", "L", "XL"];
+const SCALES = [0.875, 1, 1.125, 1.25, 1.5, 1.75, 2];
+const SCALE_LABELS = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 
 export function SettingsMenu() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -69,7 +69,7 @@ export function SettingsMenu() {
               <Group gap={6} justify="space-between" wrap="nowrap">
                 {SCALE_LABELS.map((label, i) => (
                   <UnstyledButton key={label} onClick={() => apply(i)} aria-pressed={idx === i} aria-label={`Text size ${label}`}
-                    style={{ flex: 1, minHeight: 48, borderRadius: 12, textAlign: "center", fontSize: 14, fontWeight: idx === i ? 800 : 500, border: `2px solid ${idx === i ? "currentColor" : "rgba(128,128,160,0.3)"}` }}>{label}</UnstyledButton>
+                    style={{ flex: 1, minHeight: 48, borderRadius: 12, textAlign: "center", fontSize: 13, padding: 0, fontWeight: idx === i ? 800 : 500, border: `2px solid ${idx === i ? "currentColor" : "rgba(128,128,160,0.3)"}` }}>{label}</UnstyledButton>
                 ))}
               </Group>
             )}
