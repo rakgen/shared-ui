@@ -136,7 +136,7 @@ export function buildTokens(spec: ThemeSpec, dark: boolean, comfort: Comfort = D
     infoBg:        dark ? "rgba(82,204,255,0.14)" : "#E3F5FF",
     violet:        sec,
     violetBg:      rgba(sec, dark ? 0.14 : 0.1),
-    calm,
+    calm: calm ? "1" : "",   // string on purpose: many pages type their tokens as Record<string,string>
     heroBg:        calm ? surface : forWhiteText(spec.heroes.violet[0], F.white),
     heroText:      calm ? (dark ? "#F5F5F7" : spec.ink?.[0] ?? "#101114") : "#FFFFFF",
     heroSubtext:   calm ? L(dark ? "#C9C9D0" : spec.ink?.[1] ?? "#4B4F5A") : `rgba(255,255,255,${F.sub})`,
