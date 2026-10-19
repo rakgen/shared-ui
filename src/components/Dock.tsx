@@ -33,8 +33,8 @@ export function Dock({ items, activeKey, ariaLabel = "Navigation", floating = tr
         return (
           <UnstyledButton key={t.key} onClick={t.onClick} aria-current={active ? "page" : undefined}
             aria-label={t.ariaLabel ?? (count ? `${t.label}, ${count}` : t.label)} {...t.buttonProps}
-            style={{ position: "relative", flex: 1, minWidth: 0, minHeight: 52, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, borderRadius: 22, color: active ? "#fff" : C.textSecondary }}>
-            {active && <motion.span layoutId={`dock-pill-${ariaLabel}`} transition={spring.snappy} style={{ position: "absolute", inset: 0, borderRadius: 22, background: C.accentGradient, boxShadow: `0 6px 18px ${C.accentGlow}`, zIndex: 0 }} />}
+            style={{ position: "relative", flex: 1, minWidth: 0, minHeight: 52, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2, borderRadius: 22, color: active ? C.pillInk : C.textSecondary }}>
+            {active && <motion.span layoutId={`dock-pill-${ariaLabel}`} transition={spring.snappy} style={{ position: "absolute", inset: 0, borderRadius: 22, background: C.pillBg, boxShadow: C.pillShadow, zIndex: 0 }} />}
             <Box style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "center", justifyContent: "center", height: 24 }}>
               {t.icon}
               {count > 0 && (

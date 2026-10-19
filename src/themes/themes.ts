@@ -11,6 +11,7 @@ export type ThemeSpec = {
   heroes: Record<HeroTone, string[]>;                             // gradient stops per hero tone (dark enough for white text)
   aurora: [string, string, string];                               // blob colours (hex) behind the page
   flat?: boolean;                                                 // true = no aurora/glass/press effects and the host app's own page background and text colours are left alone
+  calm?: boolean;                                                 // true = calm chrome: no aurora, solid white/graphite cards, a plain (non-gradient) hero and tab pill — colour lives in the data (Copilot-Money style); the theme still sets page background and text
 };
 
 export const THEMES: ThemeSpec[] = [
@@ -54,6 +55,10 @@ export const THEMES: ThemeSpec[] = [
     primary: "#2F6BFF", secondary: "#FF8A1F", tertiary: "#FFD23F", darkBg: "#08090F", lightBg: "#F2F6FF", lightAccent: "#1F4FD6",
     heroes: { violet: ["#1F4BE0", "#6A3DF0", "#E8650A"], cool: ["#1745D6", "#2F6BFF", "#0E9BC2"], hot: ["#D9570A", "#E8790E", "#B8650A"], mint: ["#0F9D8A", "#1F6FEB", "#6A3DF0"] },
     aurora: ["#2F6BFF", "#FF8A1F", "#FFD23F"] },
+  { id: "copilot", name: "Copilot", emoji: "🧭", blurb: "Calm & neutral · colour lives in your data", calm: true,
+    primary: "#5B5BF0", secondary: "#0EA5E9", tertiary: "#F59E0B", darkBg: "#0B0B0F", lightBg: "#F2F3F7", lightAccent: "#4338CA", lightSurface: "#FFFFFF", ink: ["#101114", "#4B4F5A", "#666B7A"],
+    heroes: { violet: ["#4338CA", "#5B5BF0"], cool: ["#0369A1", "#0EA5E9"], hot: ["#B45309", "#F59E0B"], mint: ["#047857", "#10B981"] },
+    aurora: ["#5B5BF0", "#0EA5E9", "#F59E0B"] },
   { id: "heritage", name: "Heritage", emoji: "🌿", blurb: "Calm teal · plain surfaces (prime-tools default)", flat: true,
     primary: "#3D7A73", secondary: "#2E6B64", tertiary: "#E0941A", darkBg: "#1C1C1E", lightBg: "#FAFAF9", lightAccent: "#2E6B64",
     heroes: { violet: ["#1F5A54", "#2E6B64", "#3D7A73"], cool: ["#1F4F6B", "#2E6B84", "#3D7A73"], hot: ["#8A5A12", "#A2620E", "#7A4A1A"], mint: ["#1F5A54", "#2E7A60", "#3D7A73"] },
@@ -102,7 +107,8 @@ export function buildTokens(spec: ThemeSpec, dark: boolean, comfort: Comfort = D
   const F = CONTRAST_FLOOR[comfort.contrast];
   const min = dark ? F.dark : F.light;
   const p = spec.primary;
-  const surfaceFor = dark ? mix(spec.darkBg, p, 0.1) : spec.lightSurface ?? "#FFFFFF";
+  const calm = !!spec.calm;
+  const surfaceFor = dark ? (calm ? mix(spec.darkBg, "#FFFFFF", 0.07) : mix(spec.darkBg, p, 0.1)) : spec.lightSurface ?? "#FFFFFF";
   const bgs = [dark ? spec.darkBg : spec.lightBg, surfaceFor];
   const L = (c: string) => legible(c, bgs, dark, min);                      // the comfort floor for this scheme
   const accent = L(dark ? mix(p, "#FFFFFF", 0.25) : spec.lightAccent ?? mix(p, "#000000", 0.12));
@@ -114,12 +120,12 @@ export function buildTokens(spec: ThemeSpec, dark: boolean, comfort: Comfort = D
     accentHover:   dark ? mix(accent, "#FFFFFF", 0.2) : mix(accent, "#000000", 0.15),
     bgPage:        dark ? spec.darkBg : spec.lightBg,
     bgSurface:     surface,
-    bgSubtle:      dark ? mix(spec.darkBg, p, 0.17) : mix(spec.lightBg, p, 0.08),
-    border:        dark ? `rgba(255,255,255,${Math.min(0.5, 0.1 * F.border)})` : rgba(mix(p, "#000000", 0.45), Math.min(0.6, 0.13 * F.border)),
+    bgSubtle:      calm ? (dark ? mix(spec.darkBg, "#FFFFFF", 0.12) : mix(spec.lightBg, "#000000", 0.045)) : dark ? mix(spec.darkBg, p, 0.17) : mix(spec.lightBg, p, 0.08),
+    border:        dark ? `rgba(255,255,255,${Math.min(0.5, 0.1 * F.border)})` : calm ? `rgba(16,17,20,${Math.min(0.6, 0.09 * F.border)})` : rgba(mix(p, "#000000", 0.45), Math.min(0.6, 0.13 * F.border)),
     borderStrong:  dark ? `rgba(255,255,255,${Math.min(0.7, 0.22 * F.border)})` : rgba(mix(p, "#000000", 0.45), Math.min(0.75, 0.28 * F.border)),
-    textPrimary:   dark ? "#F7F6FF" : spec.ink?.[0] ?? "#15122E",
-    textSecondary: L(dark ? "#CFCDEB" : spec.ink?.[1] ?? "#3A3664"),
-    textTertiary:  L(dark ? "#ABA9D3" : spec.ink?.[2] ?? "#5F5B8A"),
+    textPrimary:   dark ? (calm ? "#F5F5F7" : "#F7F6FF") : spec.ink?.[0] ?? "#15122E",
+    textSecondary: L(dark ? (calm ? "#C9C9D0" : "#CFCDEB") : spec.ink?.[1] ?? "#3A3664"),
+    textTertiary:  L(dark ? (calm ? "#A5A6B0" : "#ABA9D3") : spec.ink?.[2] ?? "#5F5B8A"),
     error:         L(dark ? "#FF6B88" : "#E0264D"),
     errorBg:       dark ? "rgba(255,107,136,0.14)" : "#FFEDF1",
     warning:       L(dark ? "#FFC24A" : "#D98A00"),
@@ -130,15 +136,24 @@ export function buildTokens(spec: ThemeSpec, dark: boolean, comfort: Comfort = D
     infoBg:        dark ? "rgba(82,204,255,0.14)" : "#E3F5FF",
     violet:        sec,
     violetBg:      rgba(sec, dark ? 0.14 : 0.1),
-    heroBg:        forWhiteText(spec.heroes.violet[0], F.white),
-    heroText:      "#FFFFFF",
-    heroSubtext:   `rgba(255,255,255,${F.sub})`,
-    glass:         comfort.solid ? surface : dark ? rgba(surface, 0.62) : "rgba(255,255,255,0.72)",
-    glassBorder:   dark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.9)",
-    glow:          dark ? `0 0 0 1px ${rgba(accent, 0.18)}, 0 10px 40px ${rgba(p, 0.22)}` : `0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 34px ${rgba(p, 0.14)}`,
-    heroGradient:  gradient(spec.heroes.violet.map((c) => forWhiteText(c, F.white))),
-    accentGradient: gradient([p, spec.secondary]),
-    accentGlow:    rgba(p, 0.5),
-    display:       "'Bricolage Grotesque Variable', 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, sans-serif",
+    calm,
+    heroBg:        calm ? surface : forWhiteText(spec.heroes.violet[0], F.white),
+    heroText:      calm ? (dark ? "#F5F5F7" : spec.ink?.[0] ?? "#101114") : "#FFFFFF",
+    heroSubtext:   calm ? L(dark ? "#C9C9D0" : spec.ink?.[1] ?? "#4B4F5A") : `rgba(255,255,255,${F.sub})`,
+    heroChip:      calm ? (dark ? mix(spec.darkBg, "#FFFFFF", 0.14) : mix(spec.lightBg, "#000000", 0.05)) : "rgba(255,255,255,0.20)",   // pill/chip on a hero
+    heroChipStrong: calm ? (dark ? mix(spec.darkBg, "#FFFFFF", 0.2) : mix(spec.lightBg, "#000000", 0.09)) : "rgba(255,255,255,0.32)",
+    heroTrack:     calm ? (dark ? mix(spec.darkBg, "#FFFFFF", 0.14) : mix(spec.lightBg, "#000000", 0.07)) : "rgba(255,255,255,0.28)",   // progress track on a hero
+    heroFill:      calm ? accent : "#FFFFFF",
+    glass:         calm ? surface : comfort.solid ? surface : dark ? rgba(surface, 0.62) : "rgba(255,255,255,0.72)",
+    glassBorder:   calm ? (dark ? "rgba(255,255,255,0.07)" : "rgba(16,17,20,0.06)") : dark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.9)",
+    glow:          calm ? (dark ? "0 0 0 1px rgba(255,255,255,0.04)" : "0 1px 2px rgba(16,24,40,0.05), 0 6px 20px rgba(16,24,40,0.05)") : dark ? `0 0 0 1px ${rgba(accent, 0.18)}, 0 10px 40px ${rgba(p, 0.22)}` : `0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 34px ${rgba(p, 0.14)}`,
+    heroGradient:  calm ? surface : gradient(spec.heroes.violet.map((c) => forWhiteText(c, F.white))),
+    accentGradient: calm ? accent : gradient([p, spec.secondary]),
+    accentGlow:    calm ? "rgba(0,0,0,0)" : rgba(p, 0.5),
+    // the active tab/dock pill: gradient + white ink normally; a quiet tint with accent ink when calm
+    pillBg:        calm ? (dark ? rgba(accent, 0.2) : mix(spec.lightSurface ?? "#FFFFFF", p, 0.13)) : gradient([p, spec.secondary]),
+    pillInk:       calm ? accent : "#FFFFFF",
+    pillShadow:    calm ? "none" : `0 6px 18px ${rgba(p, 0.5)}`,
+    display:       calm ? "ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" : "'Bricolage Grotesque Variable', 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, sans-serif",
   };
 }

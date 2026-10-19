@@ -36,3 +36,10 @@ html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; 
 @keyframes ptr-spin { to { transform: rotate(360deg); } }
 /* touch only: on desktop Safari, contain on html/body swallows wheel/trackpad scrolling */
 @media (pointer: coarse) { html, body { overscroll-behavior-y: contain; } }
+
+/* ── CALM themes (Copilot): no aurora, solid navbar/popovers — colour lives in the data, not the chrome ───────────────── */
+html[data-calm="1"] body::before, html[data-calm="1"] body::after { display: none; }
+html[data-calm="1"] .mantine-AppShell-navbar { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--surface) !important; }
+html[data-calm="1"] .mantine-Popover-dropdown, html[data-calm="1"] .mantine-Menu-dropdown, html[data-calm="1"] .mantine-Combobox-dropdown {
+  backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--surface) !important; border-radius: 16px !important; box-shadow: var(--glass-glow) !important;
+}

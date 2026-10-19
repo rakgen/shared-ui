@@ -21,10 +21,12 @@ export function useTheme() {
 export type ColorTokens = ReturnType<typeof useTheme>;
 
 // A glass panel: frosted card with a luminous edge. Use for every card-like surface in the personal tools.
-export const panelStyle = (C: ColorTokens, padding: number | string = 16): CSSProperties => ({
-  background: C.glass, backdropFilter: "blur(16px) saturate(140%)", WebkitBackdropFilter: "blur(16px) saturate(140%)",
-  border: `1px solid ${C.glassBorder}`, borderRadius: 22, padding, boxShadow: C.glow,
-});
+export const panelStyle = (C: ColorTokens, padding: number | string = 16): CSSProperties => C.calm
+  ? { background: C.glass, border: `1px solid ${C.glassBorder}`, borderRadius: 20, padding, boxShadow: C.glow }   // calm: a plain card, no blur
+  : {
+    background: C.glass, backdropFilter: "blur(16px) saturate(140%)", WebkitBackdropFilter: "blur(16px) saturate(140%)",
+    border: `1px solid ${C.glassBorder}`, borderRadius: 22, padding, boxShadow: C.glow,
+  };
 
 // ── Curated multi-hue identity (see ui-library.md → "Curated Multi-Hue Identity") ──
 // Fixed 5-hue set for section/category identity only — one hue per category.

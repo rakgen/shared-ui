@@ -14,6 +14,7 @@ export function ThemeSync({ effects = true }: { effects?: boolean } = {}) {
     const dark = colorScheme === "dark", r = document.documentElement.style;
     const hostText = !spec.flat || comfort.contrast !== "standard"; // flat themes at Standard contrast leave the host's own text colours alone
     document.documentElement.dataset.flat = spec.flat || !effects ? "1" : "0";
+    document.documentElement.dataset.calm = spec.calm ? "1" : "0";
     r.setProperty("--page-bg", dark ? spec.darkBg : spec.lightBg);
     const al = dark ? [0.34, 0.2, 0.1] : [0.32, 0.22, 0.14];
     r.setProperty("--aurora-a", rgba(spec.aurora[0], al[0]));
