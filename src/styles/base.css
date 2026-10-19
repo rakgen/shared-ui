@@ -34,4 +34,5 @@ html { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; 
 
 /* pull-to-refresh spinner (PullToRefresh) + stop the browser's own overscroll refresh fighting it */
 @keyframes ptr-spin { to { transform: rotate(360deg); } }
-html, body { overscroll-behavior-y: contain; }
+/* touch only: on desktop Safari, contain on html/body swallows wheel/trackpad scrolling */
+@media (pointer: coarse) { html, body { overscroll-behavior-y: contain; } }
