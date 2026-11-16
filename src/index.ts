@@ -16,3 +16,4 @@ export { PullToRefresh } from "./components/PullToRefresh";
 export { TextInput, Textarea, Autocomplete } from "./components/ClearableInputs";
 export { SCALES, SCALE_LABELS, configureScale, applyStoredScale, getScaleIndex, setScale } from "./scale";
 export { fs, fsOf, space, radius, TAP, motionMs } from "./tokens";
+export { ErrorBoundary } from "./components/ErrorBoundary";
