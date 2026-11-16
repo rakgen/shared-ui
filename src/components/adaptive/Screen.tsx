@@ -14,8 +14,15 @@ import { useLayout } from "./useLayout";
 // The two desktop columns are real columns (a 2-column grid of two stacks) and the split point is measured, NOT CSS
 // `column-count`: Safari/WebKit fails to paint animated (transformed) children inside CSS multi-column layouts — a whole
 // column of panels simply showed up blank (a card section went missing from the Cards page on a Mac).
-const flatten = (nodes: ReactNode): ReactNode[] =>
-  Children.toArray(nodes).flatMap((n) => (isValidElement(n) && n.type === Fragment ? flatten((n.props as { children?: ReactNode }).children) : [n]));
+// Each flattened panel gets a key that is unique across the WHOLE list: the key path through any fragments it sat in.
+// (Children.toArray numbers children per level, so a panel inside a fragment and a top-level panel both got ".0" and the
+// duplicate keys left stale copies behind when the column split changed.)
+type Panel = { node: ReactNode; key: string };
+const flatten = (nodes: ReactNode, prefix = ""): Panel[] =>
+  Children.toArray(nodes).flatMap((n, i): Panel[] => {
+    const key = prefix + ((isValidElement(n) && n.key != null ? String(n.key) : String(i)) + "/");
+    return isValidElement(n) && n.type === Fragment ? flatten((n.props as { children?: ReactNode }).children, key) : [{ node: n, key }];
+  });
 
 const GAP = 16;
 
@@ -23,6 +30,7 @@ export function Screen({ header, children }: { header?: ReactNode; children: Rea
   const layout = useLayout();
   const reduce = useReducedMotion();
   const items = flatten(children);
+  if ((import.meta as { env?: { DEV?: boolean } }).env?.DEV && new Set(items.map((p) => p.key)).size !== items.length) console.warn("Screen: two panels share a key", items.map((p) => p.key));
   const refs = useRef<(HTMLDivElement | null)[]>([]);
   const [split, setSplit] = useState(items.length); // panels [0, split) go left, the rest right
   const desktop = layout === "desktop";
@@ -48,8 +56,8 @@ export function Screen({ header, children }: { header?: ReactNode; children: Rea
     return () => ro.disconnect();
   }, [desktop, count, children]);
 
-  const panel = (c: ReactNode, i: number) => (
-    <motion.div key={(isValidElement(c) && c.key) || i} ref={(e: HTMLDivElement | null) => { refs.current[i] = e; }} initial={reduce ? false : { opacity: 0, y: 18, scale: 0.985 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ ...spring.smooth, delay: reduce ? 0 : Math.min(stagger(i), 0.4) }}>{c}</motion.div>
+  const panel = (c: Panel, i: number) => (
+    <motion.div key={c.key} ref={(e: HTMLDivElement | null) => { refs.current[i] = e; }} initial={reduce ? false : { opacity: 0, y: 18, scale: 0.985 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ ...spring.smooth, delay: reduce ? 0 : Math.min(stagger(i), 0.4) }}>{c.node}</motion.div>
   );
   const cut = desktop ? Math.min(split, count) : count;
 
