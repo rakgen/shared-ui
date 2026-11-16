@@ -5,29 +5,17 @@ import { ComfortPicker, ComfortPresets } from "./ComfortPicker";
 import { ThemePicker } from "./ThemePicker";
 import { useThemePrefs } from "../themes/themeStore";
 import { themeById } from "../themes/themes";
+import { SCALE_LABELS, getScaleIndex, setScale } from "../scale";
 
 // The settings gear: a two-level menu (Theme / Comfort / Text size) with one-tap Bright / Dim presets on top.
-// Text size scales the whole app's root font-size (key `uiScale` in localStorage); apply it before mount to avoid a flash.
-const SCALES = [0.875, 1, 1.125, 1.25, 1.5, 1.75, 2];
-const SCALE_LABELS = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
+// Text size: see ../scale.ts (steps, default, storage, apply-before-mount).
 
 export function SettingsMenu() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
 
-  const [idx, setIdx] = useState(() => {
-    try {
-      const stored = parseFloat(localStorage.getItem("uiScale") ?? "1.25");
-      const i = SCALES.findIndex(s => Math.abs(s - stored) < 0.01);
-      return i >= 0 ? i : 3;
-    } catch { return 3; }
-  });
-
-  const apply = (next: number) => {
-    setIdx(next);
-    document.documentElement.style.fontSize = `${SCALES[next] * 100}%`;
-    localStorage.setItem("uiScale", String(SCALES[next]));
-  };
+  const [idx, setIdx] = useState(getScaleIndex);
+  const apply = (next: number) => { setIdx(next); setScale(next); };
 
   const [view, setView] = useState<"menu" | "theme" | "comfort" | "text">("menu");
   const prefs = useThemePrefs();

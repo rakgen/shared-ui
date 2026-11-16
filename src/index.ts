@@ -14,3 +14,4 @@ export { BrandIcon } from "./icons/BrandIcon";
 export { Dock, type DockItem } from "./components/Dock";
 export { PullToRefresh } from "./components/PullToRefresh";
 export { TextInput, Textarea, Autocomplete } from "./components/ClearableInputs";
+export { SCALES, SCALE_LABELS, configureScale, applyStoredScale, getScaleIndex, setScale } from "./scale";
