@@ -2,6 +2,7 @@ import { Box, Text } from "@mantine/core";
 import type { CSSProperties, ReactNode } from "react";
 import { useTheme } from "../themes/useTheme";
 import { useActiveTheme, useThemePrefs } from "../themes/themeStore";
+import { fs, fsOf } from "../tokens";
 import { CONTRAST_FLOOR, forWhiteText, gradient, rgba, type HeroTone } from "../themes/themes";
 
 // The big gradient card at the top of a screen — each screen gets its own colour mood so the tools feel distinct
@@ -31,20 +32,20 @@ export function Hero({ tone = "violet", children }: { tone?: HeroTone; children:
 
 export const HeroLabel = ({ children }: { children: ReactNode }) => {
   const C = useTheme();
-  return <Text style={{ fontSize: 12, color: C.calm ? C.heroSubtext : "rgba(255,255,255,0.80)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700 }}>{children}</Text>;
+  return <Text style={{ fontSize: fs.xs, color: C.calm ? C.heroSubtext : "rgba(255,255,255,0.80)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700 }}>{children}</Text>;
 };
 
 export function HeroValue({ children, size = 56, style }: { children: ReactNode; size?: number; style?: CSSProperties }) {
   const C = useTheme();
-  return <Text component="div" style={{ fontFamily: C.display, fontSize: `clamp(${Math.round(size * 0.62)}px, ${(size / 5).toFixed(1)}vw, ${size}px)`, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.045em", color: C.heroText, marginTop: 8, textShadow: "0 2px 24px rgba(0,0,0,0.18)", ...style }}>{children}</Text>;
+  return <Text component="div" style={{ fontFamily: C.display, fontSize: `clamp(${fsOf(Math.round(size * 0.62))}, ${(size / 5).toFixed(1)}vw, ${fsOf(size)})`, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.045em", color: C.heroText, marginTop: 8, textShadow: "0 2px 24px rgba(0,0,0,0.18)", ...style }}>{children}</Text>;
 }
 
 export const HeroNote = ({ children, strong }: { children: ReactNode; strong?: boolean }) => {
   const C = useTheme();
-  return <Text style={{ fontSize: 14, color: strong ? C.heroText : C.calm ? C.heroSubtext : "rgba(255,255,255,0.80)", marginTop: 6, fontWeight: strong ? 600 : 400 }}>{children}</Text>;
+  return <Text style={{ fontSize: fs.sm, color: strong ? C.heroText : C.calm ? C.heroSubtext : "rgba(255,255,255,0.80)", marginTop: 6, fontWeight: strong ? 600 : 400 }}>{children}</Text>;
 };
 
 export const HeroPill = ({ children, strong }: { children: ReactNode; strong?: boolean }) => {
   const C = useTheme();
-  return <Text style={{ fontSize: 14, fontWeight: 600, padding: "6px 14px", borderRadius: 100, background: strong ? C.heroChipStrong : C.heroChip, color: C.heroText, display: "inline-block" }}>{children}</Text>;
+  return <Text style={{ fontSize: fs.sm, fontWeight: 600, padding: "6px 14px", borderRadius: 100, background: strong ? C.heroChipStrong : C.heroChip, color: C.heroText, display: "inline-block" }}>{children}</Text>;
 };
