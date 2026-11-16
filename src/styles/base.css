@@ -25,6 +25,15 @@ html:not([data-flat="1"]) .mantine-UnstyledButton-root:active:not(:disabled), ht
 /* Mantine popovers / dropdowns / menus take the glass look too (vars are set per theme by ThemeSync) */
 html:not([data-flat="1"]) .mantine-Popover-dropdown, html:not([data-flat="1"]) .mantine-Menu-dropdown, html:not([data-flat="1"]) .mantine-Combobox-dropdown { background: color-mix(in srgb, var(--surface, #15162B) 92%, transparent) !important; backdrop-filter: blur(22px) saturate(150%); -webkit-backdrop-filter: blur(22px) saturate(150%); border: 1px solid var(--glass-border, transparent) !important; border-radius: 22px !important; box-shadow: var(--glass-glow, none) !important; }
 
+/* Filled controls: ink comes from ThemeSync (--filled-ink: white on the deep light-mode fills, near-black on the pale dark-mode fills) so text on a
+   fill always clears the Comfort floor. A fill painted as a gradient keeps white (its stops are darkened for white text in the tokens). */
+.mantine-Button-root:is([data-variant="filled"], :not([data-variant])):not([style*="gradient"]) { --button-color: var(--filled-ink, #fff) !important; --button-hover-color: var(--filled-ink, #fff) !important; }
+.mantine-ActionIcon-root:is([data-variant="filled"], :not([data-variant])):not([style*="gradient"]) { --ai-color: var(--filled-ink, #fff) !important; --ai-hover-color: var(--filled-ink, #fff) !important; }
+.mantine-Badge-root[data-variant="filled"] { --badge-color: var(--filled-ink, #fff) !important; }
+.mantine-Pagination-control[data-active] { color: var(--filled-ink, #fff) !important; }
+.mantine-SegmentedControl-root[style*="--sc-color"] .mantine-SegmentedControl-label[data-active] { color: var(--filled-ink, #fff) !important; }
+.mantine-Checkbox-root, .mantine-Radio-root { --checkbox-icon-color: var(--filled-ink, #fff) !important; --radio-icon-color: var(--filled-ink, #fff) !important; }
+
 /* ── COMFORT: readable in every light ─────────────────────────────────────────────────────────────── */
 html[data-solid="1"] body::before, html[data-solid="1"] body::after { display: none; }                 /* no aurora behind text */
 html[data-solid="1"] * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; } /* no frosted blur */

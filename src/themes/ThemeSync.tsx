@@ -1,4 +1,4 @@
-import { useMantineColorScheme } from "@mantine/core";
+import { useMantineColorScheme, useMantineTheme } from "@mantine/core";
 import { useEffect } from "react";
 import { useActiveTheme, useThemePrefs } from "./themeStore";
 import { buildTokens, rgba } from "./themes";
@@ -10,6 +10,7 @@ export function ThemeSync({ effects = true }: { effects?: boolean } = {}) {
   const spec = useActiveTheme();
   const { comfort } = useThemePrefs();
   const { colorScheme } = useMantineColorScheme();
+  const primary = useMantineTheme().primaryColor;
   useEffect(() => {
     const dark = colorScheme === "dark", r = document.documentElement.style;
     const hostText = !spec.flat || comfort.contrast !== "standard"; // flat themes at Standard contrast leave the host's own text colours alone
@@ -28,7 +29,17 @@ export function ThemeSync({ effects = true }: { effects?: boolean } = {}) {
     r.setProperty("--glass", t.glass); r.setProperty("--glass-border", t.glassBorder); r.setProperty("--glass-glow", t.glow); r.setProperty("--surface", t.bgSurface);
     // effects off: opaque page/surface colour from the theme (Mantine paints body and Paper with this var)
     if (!effects && !spec.flat) r.setProperty("--mantine-color-body", t.bgPage); else if (!effects) r.removeProperty("--mantine-color-body");
+    // Filled buttons/badges/etc: Mantine paints them with a fixed palette shade and white ink, which is pale-on-white in dark mode. Point the
+    // primary and red "filled" colours at fills that clear the Comfort floor against --filled-ink (base.css applies the ink).
+    const fills: [string, string][] = [
+      [`--mantine-color-${primary}-filled`, t.fill], [`--mantine-color-${primary}-filled-hover`, t.fillHover],
+      ["--mantine-primary-color-filled", t.fill], ["--mantine-primary-color-filled-hover", t.fillHover],
+      ["--mantine-color-red-filled", t.errorFill], ["--mantine-color-red-filled-hover", t.errorFillHover],
+      ["--filled-ink", t.onFill],
+    ];
+    for (const [k, v] of fills) r.setProperty(k, v);
     document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? spec.darkBg : spec.lightBg);
-  }, [spec, colorScheme, comfort, effects]);
+    return () => { for (const [k] of fills) r.removeProperty(k); };
+  }, [spec, colorScheme, comfort, effects, primary]);
   return null;
 }

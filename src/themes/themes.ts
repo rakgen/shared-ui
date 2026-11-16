@@ -130,6 +130,15 @@ export function buildTokens(spec: ThemeSpec, dark: boolean, comfort: Comfort = D
   const L = (c: string) => legible(c, bgs, dark, min);                      // the comfort floor for this scheme
   const accent = L(dark ? mix(p, "#FFFFFF", 0.25) : spec.lightAccent ?? mix(p, "#000000", 0.12));
   const surface = surfaceFor;
+  // Filled buttons/badges/pills. A fill needs its own colour: the text-grade `accent`/`error` above are lifted PALE in dark mode so they read as
+  // text, which is exactly wrong behind white ink. Dark: a near-black ink on a fill lifted until it clears the dark floor. Light: white ink on a fill deepened until it clears the light floor.
+  const onFillInk = dark ? mix(spec.darkBg, "#000000", 0.6) : "#FFFFFF";
+  const fillFor = (base: string) => { const target = dark ? "#FFFFFF" : "#000000", need = dark ? F.dark : F.light; for (let t = 0; t <= 1.0001; t += 0.02) { const c = mix(base, target, t); if (contrast(onFillInk, c) >= need) return c; } return target; };
+  const fill = fillFor(p), errorFill = fillFor(dark ? "#FF6B88" : "#E0264D");
+  const hoverOf = (c: string) => mix(c, dark ? "#FFFFFF" : "#000000", 0.1);   // moves further from the ink, so hover never loses contrast
+  // calm active-tab pill: the strongest tint of the accent over the card surface that still lets accent-coloured ink clear the floor
+  const pillTint = (() => { const base = dark ? 0.2 : 0.13; for (let k = base; k > 0.0001; k -= 0.01) { const c = mix(surfaceFor, dark ? accent : p, k); if (contrast(accent, c) >= min) return { k, c }; } return { k: 0, c: surfaceFor }; })();
+  const wt = (c: string) => forWhiteText(c, F.white);                          // darken a gradient stop until white text clears the floor
   const sec = L(dark ? mix(spec.secondary, "#FFFFFF", 0.2) : mix(spec.secondary, "#000000", 0.12));
   return {
     accent,
@@ -165,12 +174,14 @@ export function buildTokens(spec: ThemeSpec, dark: boolean, comfort: Comfort = D
     glassBorder:   calm ? (dark ? "rgba(255,255,255,0.07)" : "rgba(16,17,20,0.06)") : dark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.9)",
     glow:          calm ? (dark ? "0 0 0 1px rgba(255,255,255,0.04)" : spec.softShadow ?? "0 1px 2px rgba(16,24,40,0.05), 0 6px 20px rgba(16,24,40,0.05)") : dark ? `0 0 0 1px ${rgba(accent, 0.18)}, 0 10px 40px ${rgba(p, 0.22)}` : `0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 34px ${rgba(p, 0.14)}`,
     heroGradient:  calm ? surface : gradient(spec.heroes.violet.map((c) => forWhiteText(c, F.white))),
-    accentGradient: calm ? accent : gradient([p, spec.secondary]),
+    accentGradient: calm ? accent : gradient([wt(p), wt(spec.secondary)]),
     accentGlow:    calm ? "rgba(0,0,0,0)" : rgba(p, 0.5),
     // the active tab/dock pill: gradient + white ink normally; a quiet tint with accent ink when calm
-    pillBg:        calm ? (dark ? rgba(accent, 0.2) : mix(spec.lightSurface ?? "#FFFFFF", p, 0.13)) : gradient([p, spec.secondary]),
+    pillBg:        calm ? (dark ? rgba(accent, Math.round(pillTint.k * 100) / 100) : pillTint.c) : gradient([wt(p), wt(spec.secondary)]),
     pillInk:       calm ? accent : "#FFFFFF",
     pillShadow:    calm ? "none" : `0 6px 18px ${rgba(p, 0.5)}`,
+    fill, fillHover: hoverOf(fill), onFill: onFillInk,
+    errorFill, errorFillHover: hoverOf(errorFill), onErrorFill: onFillInk,
     cardRadius:    `${calm ? spec.radius ?? 20 : 22}px`,   // a string, like every other token: apps type the token set as Record<string, string>
     display:       calm ? spec.display ?? "ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" : "'Bricolage Grotesque Variable', 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, sans-serif",
   };
