@@ -37,7 +37,7 @@ export class ErrorBoundary extends Component<Props, State> {
         border: "1px solid var(--glass-border, currentColor)", fontFamily: "inherit",
       }}>
         <div style={{ fontSize: fs.xl, fontWeight: 700, lineHeight: 1.2 }}>{this.props.title ?? "Something went wrong"}</div>
-        <p style={{ fontSize: fs.md, lineHeight: 1.45, margin: "8px 0 16px" }}>This page could not be shown. Reloading usually fixes it; if it keeps happening, tell Ashok what you were doing.</p>
+        <p style={{ fontSize: fs.md, lineHeight: 1.45, margin: "8px 0 16px" }}>This page could not be shown. Reloading usually fixes it; if it keeps happening, tell whoever looks after this app what you were doing.</p>
         <pre style={{ fontSize: fs.xs, lineHeight: 1.4, margin: "0 0 16px", padding: 12, borderRadius: 8, whiteSpace: "pre-wrap", wordBreak: "break-word", border: "1px solid var(--glass-border, currentColor)", color: "inherit", background: "transparent", fontFamily: "ui-monospace, Menlo, monospace" }}>{error.message || String(error)}</pre>
         <button type="button" onClick={() => window.location.reload()}
           style={{ minHeight: 48, padding: "0 24px", borderRadius: 999, fontSize: fs.md, fontWeight: 700, fontFamily: "inherit", cursor: "pointer", color: "inherit", background: "transparent", border: "2px solid currentColor" }}>
