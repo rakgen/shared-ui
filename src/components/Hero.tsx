@@ -35,9 +35,10 @@ export const HeroLabel = ({ children }: { children: ReactNode }) => {
   return <Text style={{ fontSize: fs.xs, color: C.calm ? C.heroSubtext : "rgba(255,255,255,0.80)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700 }}>{children}</Text>;
 };
 
+// The floor stays in px on purpose: it is what keeps a long amount inside the card on a narrow phone at large text sizes.
 export function HeroValue({ children, size = 56, style }: { children: ReactNode; size?: number; style?: CSSProperties }) {
   const C = useTheme();
-  return <Text component="div" style={{ fontFamily: C.display, fontSize: `clamp(${fsOf(Math.round(size * 0.62))}, ${(size / 5).toFixed(1)}vw, ${fsOf(size)})`, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.045em", color: C.heroText, marginTop: 8, textShadow: "0 2px 24px rgba(0,0,0,0.18)", ...style }}>{children}</Text>;
+  return <Text component="div" style={{ fontFamily: C.display, fontSize: `clamp(${Math.round(size * 0.62)}px, ${(size / 5).toFixed(1)}vw, ${fsOf(size)})`, fontWeight: 800, lineHeight: 1, letterSpacing: "-0.045em", color: C.heroText, marginTop: 8, textShadow: "0 2px 24px rgba(0,0,0,0.18)", ...style }}>{children}</Text>;
 }
 
 export const HeroNote = ({ children, strong }: { children: ReactNode; strong?: boolean }) => {
