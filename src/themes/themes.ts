@@ -11,6 +11,9 @@ export type ThemeSpec = {
   heroes: Record<HeroTone, string[]>;                             // gradient stops per hero tone (dark enough for white text)
   aurora: [string, string, string];                               // blob colours (hex) behind the page
   flat?: boolean;                                                 // true = no aurora/glass/press effects and the host app's own page background and text colours are left alone
+  display?: string;                                               // optional heading/number font stack (calm themes default to ui-rounded)
+  radius?: number;                                                // optional card corner radius for calm themes (default 20)
+  softShadow?: string;                                            // optional light-mode card shadow for calm themes (default: a soft two-layer shadow)
   calm?: boolean;                                                 // true = calm chrome: no aurora, solid white/graphite cards, a plain (non-gradient) hero and tab pill — colour lives in the data (Copilot-Money style); the theme still sets page background and text
 };
 
@@ -63,6 +66,16 @@ export const THEMES: ThemeSpec[] = [
     primary: "#9B2C4B", secondary: "#B8893A", tertiary: "#C98A1B", darkBg: "#17110E", lightBg: "#FBF3E8", lightAccent: "#9B2C4B", lightSurface: "#FDF8F0", ink: ["#3E2B1F", "#5A4535", "#6B5644"],
     heroes: { violet: ["#7F2340", "#9B2C4B"], cool: ["#6B2A4A", "#8A3A5E"], hot: ["#8F3A12", "#B4531A"], mint: ["#4F6B3A", "#6B8A4A"] },
     aurora: ["#9B2C4B", "#B8893A", "#C98A1B"] },
+  { id: "things", name: "Things", emoji: "☑️", blurb: "Calm white · lots of air · one quiet blue", calm: true,
+    primary: "#3B7BF6", secondary: "#7A6FD0", tertiary: "#E0941A", darkBg: "#1E1F23", lightBg: "#F6F7F9", lightAccent: "#1F57C9", lightSurface: "#FFFFFF", ink: ["#1C1D21", "#454853", "#5A5E6B"],
+    display: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif", radius: 14, softShadow: "0 1px 1px rgba(16,24,40,0.03)",
+    heroes: { violet: ["#2F5FC4", "#3B7BF6"], cool: ["#1D6FA8", "#2E8FD0"], hot: ["#9A6210", "#C4821A"], mint: ["#2B7A5A", "#3D9A72"] },
+    aurora: ["#3B7BF6", "#3B7BF6", "#3B7BF6"] },
+  { id: "things-warm", name: "Things Warm", emoji: "📜", blurb: "Warm paper · lots of air · one quiet green", calm: true,
+    primary: "#4A8A62", secondary: "#B4694A", tertiary: "#C98A1B", darkBg: "#1D1B18", lightBg: "#F5F0E6", lightAccent: "#2F6B47", lightSurface: "#FFFCF6", ink: ["#2A2620", "#514A3F", "#655D50"],
+    display: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif", radius: 14, softShadow: "0 1px 1px rgba(60,40,10,0.04)",
+    heroes: { violet: ["#2F6B47", "#4A8A62"], cool: ["#2B6B7A", "#3F8A9A"], hot: ["#8F4A2A", "#B4694A"], mint: ["#3F6B3A", "#5A8A4A"] },
+    aurora: ["#4A8A62", "#4A8A62", "#4A8A62"] },
   { id: "heritage", name: "Heritage", emoji: "🌿", blurb: "Calm teal · plain surfaces (prime-tools default)", flat: true,
     primary: "#3D7A73", secondary: "#2E6B64", tertiary: "#E0941A", darkBg: "#1C1C1E", lightBg: "#FAFAF9", lightAccent: "#2E6B64",
     heroes: { violet: ["#1F5A54", "#2E6B64", "#3D7A73"], cool: ["#1F4F6B", "#2E6B84", "#3D7A73"], hot: ["#8A5A12", "#A2620E", "#7A4A1A"], mint: ["#1F5A54", "#2E7A60", "#3D7A73"] },
@@ -150,7 +163,7 @@ export function buildTokens(spec: ThemeSpec, dark: boolean, comfort: Comfort = D
     heroFill:      calm ? accent : "#FFFFFF",
     glass:         calm ? surface : comfort.solid ? surface : dark ? rgba(surface, 0.62) : "rgba(255,255,255,0.72)",
     glassBorder:   calm ? (dark ? "rgba(255,255,255,0.07)" : "rgba(16,17,20,0.06)") : dark ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.9)",
-    glow:          calm ? (dark ? "0 0 0 1px rgba(255,255,255,0.04)" : "0 1px 2px rgba(16,24,40,0.05), 0 6px 20px rgba(16,24,40,0.05)") : dark ? `0 0 0 1px ${rgba(accent, 0.18)}, 0 10px 40px ${rgba(p, 0.22)}` : `0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 34px ${rgba(p, 0.14)}`,
+    glow:          calm ? (dark ? "0 0 0 1px rgba(255,255,255,0.04)" : spec.softShadow ?? "0 1px 2px rgba(16,24,40,0.05), 0 6px 20px rgba(16,24,40,0.05)") : dark ? `0 0 0 1px ${rgba(accent, 0.18)}, 0 10px 40px ${rgba(p, 0.22)}` : `0 1px 0 rgba(255,255,255,0.9) inset, 0 10px 34px ${rgba(p, 0.14)}`,
     heroGradient:  calm ? surface : gradient(spec.heroes.violet.map((c) => forWhiteText(c, F.white))),
     accentGradient: calm ? accent : gradient([p, spec.secondary]),
     accentGlow:    calm ? "rgba(0,0,0,0)" : rgba(p, 0.5),
@@ -158,6 +171,7 @@ export function buildTokens(spec: ThemeSpec, dark: boolean, comfort: Comfort = D
     pillBg:        calm ? (dark ? rgba(accent, 0.2) : mix(spec.lightSurface ?? "#FFFFFF", p, 0.13)) : gradient([p, spec.secondary]),
     pillInk:       calm ? accent : "#FFFFFF",
     pillShadow:    calm ? "none" : `0 6px 18px ${rgba(p, 0.5)}`,
-    display:       calm ? "ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" : "'Bricolage Grotesque Variable', 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, sans-serif",
+    cardRadius:    calm ? spec.radius ?? 20 : 22,
+    display:       calm ? spec.display ?? "ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" : "'Bricolage Grotesque Variable', 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, sans-serif",
   };
 }
