@@ -25,6 +25,8 @@ const flatten = (nodes: ReactNode, prefix = ""): Panel[] =>
   });
 
 const GAP = 16;
+/** Widest the two-column desktop layout grows. Was 1180, which left ~160px of empty margin each side on a 2000px screen (Nov 17 2026). */
+const SCREEN_MAX_WIDTH = 1600;
 
 export function Screen({ header, children }: { header?: ReactNode; children: ReactNode }) {
   const layout = useLayout();
@@ -62,7 +64,7 @@ export function Screen({ header, children }: { header?: ReactNode; children: Rea
   const cut = desktop ? Math.min(split, count) : count;
 
   return (
-    <Stack gap={16} style={{ width: "100%", maxWidth: desktop ? 1180 : layout === "tablet" ? 680 : undefined, marginInline: layout === "phone" ? undefined : "auto" }}>
+    <Stack gap={16} style={{ width: "100%", maxWidth: desktop ? SCREEN_MAX_WIDTH : layout === "tablet" ? 680 : undefined, marginInline: layout === "phone" ? undefined : "auto" }}>
       {header}
       {desktop ? (
         <Box style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", columnGap: GAP, alignItems: "start" }}>
