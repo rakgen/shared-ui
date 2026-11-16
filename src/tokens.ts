@@ -14,7 +14,7 @@ export const fs = {
   lg: rem(20),      // small headings, stat values
   xl: rem(24),      // section / sheet titles
   display: rem(34), // page titles, big figures
-  hero: rem(56),    // the one big numeral on a Hero card (HeroValue clamps it on narrow screens)
+  hero: `min(${rem(56)}, 14.4vw)`, // the one big numeral on a Hero card: 56px at the default, grows with the control on wide screens, never wider than a phone card
 } as const;
 /** rem string for a size that is derived at runtime (for example HeroValue's responsive clamp): px at the default scale. */
 export const fsOf = rem;
