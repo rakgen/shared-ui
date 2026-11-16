@@ -15,8 +15,10 @@ export type DockItem = {
   buttonProps?: Record<string, unknown>;
 };
 
-export function Dock({ items, activeKey, ariaLabel = "Navigation", floating = true, opaque = true, maxWidth = 520, zIndex = 99 }: {
-  items: DockItem[]; activeKey?: string | null; ariaLabel?: string; floating?: boolean; opaque?: boolean; maxWidth?: number; zIndex?: number;
+// `labelSize` (optional) is a CSS font-size for the labels; the default keeps the original clamp(11px, 0.75rem, 14px). Pass a
+// smaller rem-based clamp when five labels share a 390px bar, so they follow the text-size control without touching.
+export function Dock({ items, activeKey, ariaLabel = "Navigation", floating = true, opaque = true, maxWidth = 520, zIndex = 99, labelSize = "clamp(11px, 0.75rem, 14px)" }: {
+  items: DockItem[]; activeKey?: string | null; ariaLabel?: string; floating?: boolean; opaque?: boolean; maxWidth?: number; zIndex?: number; labelSize?: string;
 }) {
   const C = useTheme();
   const surface = opaque
@@ -43,7 +45,7 @@ export function Dock({ items, activeKey, ariaLabel = "Navigation", floating = tr
                 </Text>
               )}
             </Box>
-            <Text style={{ position: "relative", zIndex: 1, fontSize: "clamp(11px, 0.75rem, 14px)", letterSpacing: "-0.01em", lineHeight: 1.1, maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontWeight: active ? 700 : 600, color: "inherit" }}>{t.label}</Text>
+            <Text style={{ position: "relative", zIndex: 1, fontSize: labelSize, letterSpacing: "-0.01em", lineHeight: 1.1, maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontWeight: active ? 700 : 600, color: "inherit" }}>{t.label}</Text>
           </UnstyledButton>
         );
       })}
