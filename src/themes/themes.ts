@@ -171,7 +171,7 @@ export function buildTokens(spec: ThemeSpec, dark: boolean, comfort: Comfort = D
     pillBg:        calm ? (dark ? rgba(accent, 0.2) : mix(spec.lightSurface ?? "#FFFFFF", p, 0.13)) : gradient([p, spec.secondary]),
     pillInk:       calm ? accent : "#FFFFFF",
     pillShadow:    calm ? "none" : `0 6px 18px ${rgba(p, 0.5)}`,
-    cardRadius:    calm ? spec.radius ?? 20 : 22,
+    cardRadius:    `${calm ? spec.radius ?? 20 : 22}px`,   // a string, like every other token: apps type the token set as Record<string, string>
     display:       calm ? spec.display ?? "ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" : "'Bricolage Grotesque Variable', 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, sans-serif",
   };
 }
