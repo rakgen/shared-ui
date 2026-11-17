@@ -60,3 +60,7 @@ html[data-calm="1"] .mantine-Popover-dropdown, html[data-calm="1"] .mantine-Menu
 
 /* AppFrame sidebar width bounds (px on purpose: the sidebar grows with the text size only up to the max) */
 :root { --sui-nav-min: 216px; --sui-nav-max: 280px; }
+
+/* Disabled fields: Mantine fades them to 60% opacity, which drops the value to ~3:1 (measured Nov 17 2026). The disabled state is already shown by the
+   disabled fill and cursor, and --mantine-color-disabled-color (ThemeSync) is a checked grey, so keep full opacity. */
+.mantine-Input-input:disabled, .mantine-Input-input[data-disabled] { opacity: 1 !important; }

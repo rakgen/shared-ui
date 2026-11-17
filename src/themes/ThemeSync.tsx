@@ -51,8 +51,12 @@ export function ThemeSync({ effects = true }: { effects?: boolean } = {}) {
     // "+₹168" 1.75:1, "paid" badge 3.8:1). Take them from the theme's text-grade tokens, which the contrast gate checks. Dark mode already passes.
     // Fills of yellow/orange are left alone (apps put dark ink on them); the others get the deep token as fill too, which white ink suits.
     const semantic: [string, string, boolean][] = [["green", t.success, true], ["teal", t.accent, true], ["blue", t.info, true], ["cyan", t.info, true], ["grape", t.violet, true], ["violet", t.violet, true], ["yellow", t.warning, false], ["orange", t.warning, false]];
+    // Text on a light tint (light badges, alerts, light buttons) loses up to ~15% contrast against its own tint, which drops the "standard"
+    // tokens under 4.5:1 (measured Nov 17 2026 on prime-tools: blue 3.9, orange 4.2, green/teal 4.5). That text takes the same hue 22% deeper;
+    // plain coloured text (`c="green"` -> --mantine-color-green-text) often sits on a tinted row too (Margin Watch, 4.48), so it gets the same shade.
+    const onTint = (v: string) => `color-mix(in srgb, ${v} 78%, #000)`;
     if (!dark) for (const [c, v, fill] of semantic) {
-      fills.push([`--mantine-color-${c}-light-color`, v], [`--mantine-color-${c}-outline`, v]);
+      fills.push([`--mantine-color-${c}-light-color`, onTint(v)], [`--mantine-color-${c}-outline`, v], [`--mantine-color-${c}-text`, onTint(v)]);
       if (fill) fills.push([`--mantine-color-${c}-filled`, v]);
     }
     for (const [k, v] of fills) r.setProperty(k, v);
