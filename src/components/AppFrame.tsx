@@ -68,7 +68,7 @@ export function AppFrame({ nav, activeKey, linkProps, onSelect, brand, title, he
   const [openGroups, setOpenGroups] = useState<Record<string, boolean> | null>(() => readJson(groupsKey, null));
   const isOpen = (key: string) => openGroups?.[key] ?? (defaultOpen === "all" || key === current);
   const save = (next: Record<string, boolean>) => { setOpenGroups(next); try { localStorage.setItem(groupsKey, JSON.stringify(next)); } catch { /* ignore */ } };
-  const setOpen = (key: string, v: boolean) => save({ ...Object.fromEntries(groups.map((g) => [g.key, isOpen(g.key)])), [key]: v });
+  const setOpen = (key: string, v: boolean) => save({ ...openGroups, ...Object.fromEntries(groups.map((g) => [g.key, isOpen(g.key)])), [key]: v });
   const allOpen = groups.every((g) => isOpen(g.key));
   useEffect(() => {
     if (current && !isOpen(current)) setOpen(current, true);
@@ -76,8 +76,10 @@ export function AppFrame({ nav, activeKey, linkProps, onSelect, brand, title, he
   }, [current]);
 
   const tint = (icon: ReactNode, color?: string) => <Box style={{ color: color ?? C.textTertiary, display: "flex" }}>{icon}</Box>;
-  const rowStyles = { root: { borderRadius: 8, minHeight: 40, paddingBlock: 6 }, label: { lineHeight: 1.25 } };   // long labels wrap rather than being cut off
-  const groupStyles = { root: { borderRadius: 8, minHeight: 36, paddingBlock: 4 }, label: { fontWeight: 600, fontSize: 12, textTransform: "uppercase" as const, letterSpacing: "0.04em", color: C.textTertiary } };
+  // Tight horizontal padding and a small child indent (prime-tools' D249 measurements): labels get the width, long ones wrap
+  // rather than being cut off. The star sits in a narrow right section.
+  const rowStyles = { root: { borderRadius: 8, minHeight: 40, paddingBlock: 6, paddingInline: 8 }, label: { lineHeight: 1.25 }, section: { marginInlineEnd: 8 } };
+  const groupStyles = { root: { borderRadius: 8, minHeight: 36, paddingBlock: 4, paddingInline: 8 }, children: { paddingLeft: 12 }, section: { marginInlineEnd: 8 }, label: { fontWeight: 600, fontSize: 12, textTransform: "uppercase" as const, letterSpacing: "0.04em", color: C.textTertiary } };
 
   const star = (key: string) => {
     if (!favorites) return undefined;
@@ -101,7 +103,7 @@ export function AppFrame({ nav, activeKey, linkProps, onSelect, brand, title, he
 
   const expandAll = groups.length > 1 && (
     <Tooltip label={allOpen ? "Collapse all groups" : "Expand all groups"} position="right" withArrow>
-      <ActionIcon variant="subtle" color="gray" onClick={() => save(Object.fromEntries(groups.map((g) => [g.key, !allOpen])))} aria-label={allOpen ? "Collapse all groups" : "Expand all groups"} style={{ width: 40, height: 40, flexShrink: 0 }}>
+      <ActionIcon variant="subtle" color="gray" onClick={() => save({ ...openGroups, ...Object.fromEntries(groups.map((g) => [g.key, !allOpen])) })} aria-label={allOpen ? "Collapse all groups" : "Expand all groups"} style={{ width: 40, height: 40, flexShrink: 0 }}>
         {allOpen ? <IconChevronsUp size={18} /> : <IconChevronsDown size={18} />}
       </ActionIcon>
     </Tooltip>
