@@ -10,6 +10,7 @@ export { CountUp } from "./components/CountUp";
 export { ThemePicker } from "./components/ThemePicker";
 export { ComfortPicker, ComfortPresets } from "./components/ComfortPicker";
 export { SettingsMenu } from "./components/SettingsMenu";
+export { AppFrame, SIDEBAR_WIDTH, HEADER_HEIGHT, CONTENT_MAX, type NavItem, type NavGroup, type NavEntry } from "./components/AppFrame";
 export { BrandIcon } from "./icons/BrandIcon";
 export { Dock, type DockItem } from "./components/Dock";
 export { PullToRefresh } from "./components/PullToRefresh";

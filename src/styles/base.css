@@ -52,3 +52,11 @@ html[data-calm="1"] .mantine-AppShell-navbar { backdrop-filter: none !important;
 html[data-calm="1"] .mantine-Popover-dropdown, html[data-calm="1"] .mantine-Menu-dropdown, html[data-calm="1"] .mantine-Combobox-dropdown {
   backdrop-filter: none !important; -webkit-backdrop-filter: none !important; background: var(--surface) !important; border-radius: 16px !important; box-shadow: var(--glass-glow) !important;
 }
+
+/* AppFrame sidebar stars: shown on the row you hover or focus, and always on starred pages. Devices with no hover keep them visible. */
+.sui-nav-row .sui-fav-star:not([data-starred]) { visibility: hidden; }
+.sui-nav-row:hover .sui-fav-star, .sui-nav-row:focus-within .sui-fav-star { visibility: visible; }
+@media (hover: none) { .sui-nav-row .sui-fav-star:not([data-starred]) { visibility: visible; } }
+
+/* AppFrame sidebar width bounds (px on purpose: the sidebar grows with the text size only up to the max) */
+:root { --sui-nav-min: 216px; --sui-nav-max: 280px; }

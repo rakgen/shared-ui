@@ -1,6 +1,7 @@
 import { ActionIcon, Divider, Group, Popover, Stack, Switch, Text, UnstyledButton, useMantineColorScheme } from "@mantine/core";
 import { IconChevronLeft, IconChevronRight, IconSettings } from "@tabler/icons-react";
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { ComfortPicker, ComfortPresets } from "./ComfortPicker";
 import { ThemePicker } from "./ThemePicker";
 import { useThemePrefs } from "../themes/themeStore";
@@ -10,7 +11,9 @@ import { SCALE_LABELS, getScaleIndex, setScale } from "../scale";
 // The settings gear: a two-level menu (Theme / Comfort / Text size) with one-tap Bright / Dim presets on top.
 // Text size: see ../scale.ts (steps, default, storage, apply-before-mount).
 
-export function SettingsMenu() {
+// `as="row"` draws the trigger as a full-width "Settings" row (the foot of the sidebar); the default is the 48px gear.
+// `extra` adds app-specific rows at the bottom of the menu.
+export function SettingsMenu({ as = "icon", extra }: { as?: "icon" | "row"; extra?: ReactNode } = {}) {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
 
@@ -29,12 +32,18 @@ export function SettingsMenu() {
   );
 
   return (
-    <Popover position="bottom-end" width={290} withinPortal shadow="0 4px 16px rgba(0,0,0,0.10)" middlewares={{ flip: false, shift: { padding: 12 } }}
+    <Popover position={as === "row" ? "right-end" : "bottom-end"} width={290} withinPortal shadow="0 4px 16px rgba(0,0,0,0.10)" middlewares={{ flip: false, shift: { padding: 12 } }}
       onChange={(o) => { if (!o) setView("menu"); }}>
       <Popover.Target>
-        <ActionIcon variant="subtle" aria-label="Settings" style={{ width: 48, height: 48 }}>
-          <IconSettings size={18} />
-        </ActionIcon>
+        {as === "row" ? (
+          <UnstyledButton aria-label="Settings" style={{ width: "100%", minHeight: 48, display: "flex", alignItems: "center", gap: 10, padding: "0 12px", borderRadius: 8, fontSize: 14, fontWeight: 600 }}>
+            <IconSettings size={18} />Settings
+          </UnstyledButton>
+        ) : (
+          <ActionIcon variant="subtle" aria-label="Settings" style={{ width: 48, height: 48 }}>
+            <IconSettings size={18} />
+          </ActionIcon>
+        )}
       </Popover.Target>
       <Popover.Dropdown style={{ width: "min(320px, calc(100vw - 24px))", maxHeight: "calc(100dvh - 88px)", overflowY: "auto", overscrollBehavior: "contain" }}>
         {view === "menu" ? (
@@ -45,6 +54,7 @@ export function SettingsMenu() {
             {row("theme", "Theme", themeName)}
             {row("comfort", "Comfort", `${prefs.comfort.contrast} contrast`)}
             {row("text", "Text size", SCALE_LABELS[idx])}
+            {extra}
           </Stack>
         ) : (
           <Stack gap="sm" p="xs">
