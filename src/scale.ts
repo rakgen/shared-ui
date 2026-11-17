@@ -10,6 +10,9 @@ let defaultScale = 1.25;
 /** Call once, before applyStoredScale(): the scale a brand-new visitor gets (akfgen-tools 1.25, prime-tools 1.125). */
 export function configureScale(opts: { default?: number }) {
   if (opts.default != null && opts.default > 0) defaultScale = opts.default;
+  // The text tokens (tokens.ts `fs`) are "px at this app's default text size": tell them the root size of that default, so an
+  // fs.display figure is 34px at the default in every app (akfgen-tools 1.25 -> 20px root, prime-tools 1.125 -> 18px).
+  try { document.documentElement.style.setProperty("--fs-ref", String(16 * defaultScale)); } catch { /* no DOM */ }
 }
 
 const nearest = (v: number) => SCALES.reduce((best, s, i) => (Math.abs(s - v) < Math.abs(SCALES[best] - v) ? i : best), 0);

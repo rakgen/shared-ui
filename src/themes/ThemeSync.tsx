@@ -34,6 +34,9 @@ export function ThemeSync({ effects = true }: { effects?: boolean } = {}) {
     r.setProperty("--error-ink", t.onErrorFill);
     r.setProperty("--mantine-color-error", t.error); // required-field asterisks and error text: the dark-mode default red is 3.4:1
     r.setProperty("--glass", t.glass); r.setProperty("--glass-border", t.glassBorder); r.setProperty("--glass-glow", t.glow); r.setProperty("--surface", t.bgSurface);
+    // One card rule for both apps: corner and border come from the theme (frameComponents applies them to Mantine Paper/Card;
+    // hand-drawn cards use the same vars or the cardRadius token). Inside a card, boxes use radius.control (8px).
+    r.setProperty("--sui-card-radius", t.cardRadius); r.setProperty("--mantine-color-default-border", t.border);
     // effects off: opaque page/surface colour from the theme (Mantine paints body and Paper with this var)
     if (!effects && !spec.flat) r.setProperty("--mantine-color-body", t.bgPage); else if (!effects) r.removeProperty("--mantine-color-body");
     // Filled buttons/badges/etc: Mantine paints them with a fixed palette shade and white ink, which is pale-on-white in dark mode. Point the
